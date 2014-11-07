@@ -3,6 +3,7 @@ var imagediff = require('../lib/imagediff');
 var request = require('request');
 var async = require('async');
 var temp = require('temp');
+var base64 = require('base64-stream');
 var fs = require('fs');
 var router = express.Router();
 
@@ -63,7 +64,9 @@ router.post('/', function(req, res) {
         simg: results.simg
       };
       imagediff(options, function(err, output) {
-        res.json(output);
+        res.status(200);
+        fs.createReadStream(output.path).pipe(base64.encode()).pipe(res);
+        
       });
     });
 });
